@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/schemas/ipr-manifest.json",
+  "title": "IPR Manifest (hash-only)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "proto",
+    "ipr_id",
+    "subject_id",
+    "action_id",
+    "scope",
+    "time",
+    "hashes",
+    "policy"
+  ],
+  "properties": {
+    "proto": {
+      "type": "string",
+      "const": "HBCE-IPR-MANIFEST-v1"
+    },
+    "ipr_id": { "type": "string", "minLength": 8 },
+    "subject_id": { "type": "string", "minLength": 8 },
+    "action_id": { "type": "string", "minLength": 4 },
+    "scope": { "type": "string", "minLength": 1 },
+    "time": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ts"],
+      "properties": {
+        "ts": { "type": "string", "minLength": 10 }
+      }
+    },
+    "hashes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["job_hash", "context_hash"],
+      "properties": {
+        "job_hash": { "type": "string", "minLength": 16 },
+        "context_hash": { "type": "string", "minLength": 16 },
+        "evidence_hash": { "type": "string", "minLength": 16 }
+      }
+    },
+    "anchors": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "ipfs": { "type": "string" },
+        "btc": { "type": "string" },
+        "evm": { "type": "string" }
+      }
+    },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "data", "fail_closed"],
+      "properties": {
+        "mode": { "type": "string", "const": "UE_FIRST" },
+        "data": { "type": "string", "const": "HASH_ONLY" },
+        "fail_closed": { "type": "boolean", "const": true }
+      }
+    }
+  }
+}

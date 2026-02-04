@@ -1,0 +1,82 @@
+openapi: 3.0.3
+info:
+  title: IPR Gate API
+  version: 1.0.0
+  description: >
+    Decision Gate (JOKER/DGC) for IPR-Datacenter. Ex-ante verification,
+    fail-closed, hash-only.
+paths:
+  /precheck:
+    post:
+      summary: Pre-check job eligibility (ex-ante)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [ipr_id, job_hash, context_hash]
+              properties:
+                ipr_id: { type: string }
+                job_hash: { type: string }
+                context_hash: { type: string }
+      responses:
+        "200":
+          description: PASS/FAIL
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required: [status]
+                properties:
+                  status: { type: string, enum: [PASS, FAIL] }
+                  reason_code: { type: string }
+                  permit: { type: string, description: "Execution Permit token (signed)" }
+  /permit/verify:
+    post:
+      summary: Verify an execution permit token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [permit]
+              properties:
+                permit: { type: string }
+      responses:
+        "200":
+          description: Permit validity
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required: [valid]
+                properties:
+                  valid: { type: boolean }
+                  reason_code: { type: string }
+  /evidence:
+    post:
+      summary: Register Evidence Pack (hash-only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        "200":
+          description: Evidence accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required: [accepted]
+                properties:
+                  accepted: { type: boolean }
